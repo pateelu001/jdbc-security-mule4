@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+  xmlns:http="http://www.mulesoft.org/schema/mule/http"
+  xmlns:db="http://www.mulesoft.org/schema/mule/db"
+  xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-current.xsd
+    http://www.mulesoft.org/schema/mule/core
+    http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+    http://www.mulesoft.org/schema/mule/spring
+    http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
+    http://www.mulesoft.org/schema/mule/db
+    http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+    http://www.mulesoft.org/schema/mule/http
+    http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+	    <spring:config name="springConfig" files="spring-beans.xml"/>
+	
+   	<spring:security-manager doc:name="Spring Security manager" doc:id="e5d7f618-823f-417d-a72b-b9c6bd81b291" >
+		<spring:delegate-security-provider name="mule-provider" delegate-ref="authenticationManager" />
+	</spring:security-manager>
+	
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="49d5ebce-1968-4e3a-a885-7b6e6b84d822" basePath="/api" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="jdbc-security-mule4Flow" doc:id="affb8bcd-a612-4524-b9d1-75c9abfa1f95" >
+		<http:listener doc:name="Listener" doc:id="48eef432-96d9-4f7c-a09b-21b1e5191e2e" config-ref="HTTP_Listener_config" path="/securityTest"/> 
+
+
+		<http:basic-security-filter doc:name="Basic security filter" doc:id="848ee679-9322-4df5-bcc6-fa613b662472" realm="mule"/>
+		<spring:authorization-filter doc:id="afe1d779-2490-4331-bcd0-36ff9f252804" doc:name="" requiredAuthorities="ROLE_ADMIN"/>
+		<ee:transform doc:name="Transform Message" doc:id="194edaf8-5864-4367-b9b2-486283cab341" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	Message : "Hello World"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

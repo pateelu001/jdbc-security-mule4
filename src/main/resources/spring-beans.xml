@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+  xmlns:ss="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/jdbc
+    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+    
+<bean id="datasource" name="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url"
+			value="jdbc:oracle:thin:@harsha:1525:test" />
+		<property name="username" value="test" />
+		<property name="password" value="test01" />
+    </bean>
+    
+    <ss:authentication-manager alias="authenticationManager" id="authenticationManager">
+		<ss:authentication-provider>
+			<ss:jdbc-user-service data-source-ref="datasource" id="jdbcService"
+				users-by-username-query="select username,password, enabled from users where username = ?" 
+				authorities-by-username-query="select username,authority from user_roles where username= ?" />
+		</ss:authentication-provider>
+	</ss:authentication-manager>
+    
+	<!--ss:authentication-manager alias="authenticationManager" id="authenticationManager">
+		<ss:authentication-provider>
+		 <ss:user-service id="userService">
+		         <ss:user name="admin" password="admin" authorities="ROLE_ADMIN" /> 
+		         <ss:user name="harsha" password="welcome" authorities="ROLE_USER" />  
+          </ss:user-service>
+		</ss:authentication-provider>
+	</ss:authentication-manager -->
+	
+</beans>
